@@ -318,6 +318,11 @@
 
     <script>
         let storeData = {};
+        let selectedDishes = {};
+        const savedCart = localStorage.getItem('cartData');
+        if (savedCart) {
+            selectedDishes = JSON.parse(savedCart);
+        }
 
         // Helper function to slugify strings (must match the one in index.html)
         function slugify(text) {
@@ -403,9 +408,13 @@
                         ${product.add_text ? `<p class="add-text">${product.add_text}</p>` : ''}
     
                         <div class="action-buttons">
-                            <button class="action-button whatsapp" onclick="shareOnWhatsApp('${product.name}', ${product.price}, '${headerData.whatsappNumber || ''}')">
+                            <!--<button class="action-button whatsapp" onclick="shareOnWhatsApp('${product.name}', ${product.price}, '${headerData.whatsappNumber || ''}')">
+                                <i class="fab fa-whatsapp"></i> Order on WhatsApp
+                            </button>-->
+                            <button class="action-button whatsapp" onclick="shareOnWhatsApp(${headerData.whatsappNumber})">
                                 <i class="fab fa-whatsapp"></i> Order on WhatsApp
                             </button>
+
                             <button class="action-button upi" onclick="payViaUPI(${product.price}, '${headerData.upi_id || ''}')">
                                 <i class="fas fa-money-bill-wave"></i> Pay via UPI
                             </button>
@@ -473,16 +482,35 @@
                 container.innerHTML = '<div class="loading-message">Error loading product details. Please try again.</div>';
             }
         }
-
-        function shareOnWhatsApp(productName, productPrice, whatsappNumber) {//Added a new argument whatsappNumber
+        function buildCartMessage() {
+            if (!selectedDishes || Object.keys(selectedDishes).length === 0) {
+                return "Cart is empty.";
+            }
+            let message = "I would like to order:\n";
+            for (const [dish, quantity] of Object.entries(selectedDishes)) {
+                message += `- ${dish} x${quantity}\n`;
+            }
+            return message;
+        }
+        function shareOnWhatsApp(whatsappNumber) {
             if (!whatsappNumber) {
                 alert("WhatsApp number not found. Please try again later.");
                 return;
             }
-            const message = `I would like to order: ${productName} - ₹${productPrice}`;
+            const message = buildCartMessage();
             const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+            localStorage.removeItem('cartData');
             window.open(whatsappURL, "_blank");
         }
+        // function shareOnWhatsApp(productName, productPrice, whatsappNumber) {//Added a new argument whatsappNumber
+        //     if (!whatsappNumber) {
+        //         alert("WhatsApp number not found. Please try again later.");
+        //         return;
+        //     }
+        //     const message = `I would like to order: ${productName} - ₹${productPrice}`;
+        //     const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+        //     window.open(whatsappURL, "_blank");
+        // }
 
         function payViaUPI(amount, upiId) { //Added a new argument upiId
             if (!upiId) {

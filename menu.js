@@ -382,6 +382,7 @@ function updateCartUI() {
     } else {
         cart.classList.add("hidden");
     }
+    localStorage.setItem('cartData', JSON.stringify(selectedDishes)); // save cart
 }
 
 // Update Order List & Show Total Price
