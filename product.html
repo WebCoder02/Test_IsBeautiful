@@ -282,6 +282,13 @@
             /* let clicks pass through to link */
         }
 
+        .action-button.inactive {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+            /* Prevent clicks */
+        }
+
 
         @media (max-width: 480px) {
             body {
@@ -411,11 +418,11 @@
                             <!--<button class="action-button whatsapp" onclick="shareOnWhatsApp('${product.name}', ${product.price}, '${headerData.whatsappNumber || ''}')">
                                 <i class="fab fa-whatsapp"></i> Order on WhatsApp
                             </button>-->
-                            <button class="action-button whatsapp" onclick="shareOnWhatsApp(${headerData.whatsappNumber})">
+                            <button id="whatsappBtn" class="action-button whatsapp" onclick="shareOnWhatsApp(${headerData.whatsappNumber})">
                                 <i class="fab fa-whatsapp"></i> Order on WhatsApp
                             </button>
 
-                            <button class="action-button upi" onclick="payViaUPI(${product.price}, '${headerData.upi_id || ''}')">
+                            <button id="upiBtn" class="action-button upi" onclick="payViaUPI(${product.price}, '${headerData.upi_id || ''}')">
                                 <i class="fas fa-money-bill-wave"></i> Pay via UPI
                             </button>
                         </div>
@@ -473,6 +480,7 @@
                             </div>
                         </div>
                     `;
+                    toggleButtons();
                 } else {
                     container.innerHTML = '<div class="loading-message">Product not found.</div>';
                 }
@@ -492,6 +500,7 @@
             }
             return message;
         }
+
         function shareOnWhatsApp(whatsappNumber) {
             if (!whatsappNumber) {
                 alert("WhatsApp number not found. Please try again later.");
@@ -552,6 +561,22 @@
                 });
             });
         });
+        function toggleButtons() {
+            const whatsappBtn = document.getElementById("whatsappBtn");
+            const upiBtn = document.getElementById("upiBtn");
+
+            const isCartEmpty = !selectedDishes || Object.keys(selectedDishes).length === 0;
+
+            if (whatsappBtn) {
+                whatsappBtn.disabled = isCartEmpty;
+                whatsappBtn.classList.toggle("inactive", isCartEmpty);
+            }
+
+            if (upiBtn) {
+                upiBtn.disabled = isCartEmpty;
+                upiBtn.classList.toggle("inactive", isCartEmpty);
+            }
+        }
 
 
 

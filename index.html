@@ -553,7 +553,6 @@
                     }
                 });
 
-
             } catch (error) {
                 console.error("Error loading data:", error);
                 document.getElementById("menu-content").innerHTML =
@@ -629,13 +628,12 @@
             menuContent.innerHTML = html;
 
 
-
             // Initialize lazy loading and other features
             lazyLoadImages();
             handleReadMore();
             checkAvailability();
         }
-
+        
         // Render individual dish item
         function renderDishItem(dish) {
             const isonsale = dish.onsale === true;
